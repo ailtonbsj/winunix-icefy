@@ -1,0 +1,8 @@
+[Unit]
+Description=Icefy executado ao ligar o Sistema
+[Service]
+Type=oneshot
+User=root
+ExecStart=/opt/icefy/main.sh
+[Install]
+WantedBy=multi-user.target
