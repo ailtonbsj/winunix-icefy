@@ -8,7 +8,7 @@ for reg in $(cat /tmp/ListOfUsers.ice); do
 	
 	echo "Freezing user "$user
 	cd $folder
-	find . | grep -v "$(cat /opt/icefy/ignore)" > /tmp/ListToRemove.ice
+	find . | grep -v "$(cat /opt/icefy/ignore)" | grep -v "\.$" > /tmp/ListToRemove.ice
 	sed -i 's/ /\\ /g' /tmp/ListToRemove.ice
 	xargs rm -rf < /tmp/ListToRemove.ice
 	rsync -a --chown=$user:$user /etc/skel/ $folder/

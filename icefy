@@ -1,0 +1,53 @@
+#!/bin/bash
+
+function rmHomeDirs () {
+	cat /opt/icefy/ignore | \
+	grep -v "Documentos\|Downloads\|Imagens\|Modelos\|Música\|Público\|Vídeos" \
+	> /tmp/ListToIgnoreTmp.ice
+	cat /tmp/ListToIgnoreTmp.ice > /opt/icefy/ignore
+}
+
+case "$1" in
+	enable)
+		ln -s /opt/icefy/icefy.service /etc/systemd/system/
+		if [ -f /etc/systemd/system/icefy.service ]; then
+			systemctl enable icefy.service
+			echo "Enabled with successful!"
+		fi
+		;;
+	disable)
+		systemctl disable icefy.service
+		rm -rf /etc/systemd/system/icefy.service
+		if [ ! -f /etc/systemd/system/icefy.service ]; then
+			echo "Disabled with successful!"
+		fi
+		;;
+	keep-dirs)
+		rmHomeDirs
+		printf "Documentos\nDownloads\nImagens\nModelos\nMúsica\nPúblico\nVídeos" \
+		>> /opt/icefy/ignore
+		echo "Maintaining folders of users!"
+		;;
+	rm-dirs)
+		rmHomeDirs
+		echo "Removing all folders of users!"
+		;;
+	clear)
+		/opt/icefy/main.sh
+		;;
+	*)
+		cat << EOF
+Usage:
+	icefy [options]
+
+Options:
+	enable                Enable the program on reboot
+	disable               Disable the program
+	clear                 Delete the files now (be careful!)
+	keep-dirs             Sets up to keep files in home directories.
+	                      The folders are: Documentos, Downloads, Imagens,
+	                      Modelos, Músicas, Público and Vídeos
+	rm-dirs               Sets up to remove all files from user folders
+	help                  Read this help and exit
+EOF
+esac
