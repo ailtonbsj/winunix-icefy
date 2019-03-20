@@ -8,6 +8,8 @@ fi
 mkdir /opt/icefy/ -p
 cp main.sh /opt/icefy/
 cp ignore /opt/icefy/
-cp icefy.service /etc/systemd/system/
+cp icefy.service /opt/icefy/
+ln -s /opt/icefy/icefy.service /etc/systemd/system/
+systemctl enable icefy.service
 
 #systemctl enable icefy.service --now
