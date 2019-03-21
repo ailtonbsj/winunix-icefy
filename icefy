@@ -7,6 +7,29 @@ function rmHomeDirs () {
 	cat /tmp/ListToIgnoreTmp.ice > /opt/icefy/ignore
 }
 
+function showHelp () {
+	cat << EOF
+USAGE:
+  icefy [options] [args]
+
+OPTIONS:
+  enable           Enable the program on reboot
+  disable          Disable the program
+  clear            Delete the files now (be careful!)
+  home-dirs        Mode of how files are removed from machine.
+       ARGUMENTS:
+                   keep : Sets up to keep files in home directories.
+                          The folders are: Documentos, Downloads,
+                          Imagens, Modelos, Músicas, Público and Vídeos
+                   rm   : Sets up to remove all files from user folders
+  save-confs       Save settings of Browsers on Skel of system
+       ARGUMENTS:  
+                   firefox : Copy confs of Firefox to Skel
+                   chrome  : Copy confs of Chrome to Skel
+  help             Read this help and exit
+EOF
+}
+
 case "$1" in
 	enable)
 		ln -s /opt/icefy/icefy.service /etc/systemd/system/
@@ -22,32 +45,39 @@ case "$1" in
 			echo "Disabled with successful!"
 		fi
 		;;
-	keep-dirs)
-		rmHomeDirs
-		printf "Documentos\nDownloads\nImagens\nModelos\nMúsica\nPúblico\nVídeos" \
-		>> /opt/icefy/ignore
-		echo "Maintaining folders of users!"
-		;;
-	rm-dirs)
-		rmHomeDirs
-		echo "Removing all folders of users!"
+	home-dirs)
+		if [ "$2" == "rm" ]; then
+			rmHomeDirs
+			echo "Removing all folders of users!"
+		elif [ "$2" == "keep" ]; then
+			rmHomeDirs
+			printf "Documentos\nDownloads\nImagens\nModelos\nMúsica\nPúblico\nVídeos" \
+			>> /opt/icefy/ignore
+			echo "Maintaining folders of users!"
+		else
+			showHelp
+		fi
 		;;
 	clear)
 		/opt/icefy/main.sh
 		;;
+	save-confs)
+		if [ "$USER" == "root" ]; then
+			echo "You can't use root to copy to Skel"
+			exit
+		fi
+		FOLD=$(cat /etc/passwd | grep "$USER:" -m 1 | cut -d ":" -f "6")
+		if [ "$2" == "firefox" ]; then
+			sudo cp -rf $FOLD/.mozilla /etc/skel/
+			echo "Saving confs of Firefox on skel"
+		elif [ "$2" == "chrome" ]; then
+			sudo cp -rf $FOLD/.config/google-chrome /etc/skel/.config/
+			echo "Saving confs of Chrome on skel"
+		else
+			showHelp
+		fi
+		;;
 	*)
-		cat << EOF
-Usage:
-	icefy [options]
+	showHelp
 
-Options:
-	enable                Enable the program on reboot
-	disable               Disable the program
-	clear                 Delete the files now (be careful!)
-	keep-dirs             Sets up to keep files in home directories.
-	                      The folders are: Documentos, Downloads, Imagens,
-	                      Modelos, Músicas, Público and Vídeos
-	rm-dirs               Sets up to remove all files from user folders
-	help                  Read this help and exit
-EOF
 esac
