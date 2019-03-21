@@ -11,18 +11,24 @@ Run the file ` install.sh` as superuser. After install by default the program is
 After install use the command `icefy --help` to see more options.
 
 ```
-Usage:
-	icefy [options]
+USAGE:
+  icefy [options] [args]
 
-Options:
-	enable                Enable the program on reboot
-	disable               Disable the program
-	clear                 Delete the files now (be careful!)
-	keep-dirs             Sets up to keep files in home directories.
-	                      The folders are: Documentos, Downloads, Imagens,
-	                      Modelos, Músicas, Público and Vídeos
-	rm-dirs               Sets up to remove all files from user folders
-	help                  Read this help and exit
+OPTIONS:
+  enable           Enable the program on reboot
+  disable          Disable the program
+  clear            Delete the files now (be careful!)
+  home-dirs        Mode of how files are removed from machine.
+       ARGUMENTS:
+                   keep : Sets up to keep files in home directories.
+                          The folders are: Documentos, Downloads,
+                          Imagens, Modelos, Músicas, Público and Vídeos
+                   rm   : Sets up to remove all files from user folders
+  save-confs       Save settings of Browsers on Skel of system
+       ARGUMENTS:  
+                   firefox : Copy confs of Firefox to Skel
+                   chrome  : Copy confs of Chrome to Skel
+  help             Read this help and exit
 ```
 
 #### ATTENTION
